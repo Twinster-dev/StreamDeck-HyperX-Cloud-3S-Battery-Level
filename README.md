@@ -41,10 +41,8 @@
 
 **Manual:**
 1. Download the latest `.streamDeckPlugin` from [Releases](https://github.com/JAG-Twinster/StreamDeck-HyperX-Cloud-3S-Battery-Level/releases/tag/release)
-2. Double-click the file — Stream Deck software installs it automatically
-3. Drag the **HyperX Battery** action onto any key
-
-If the above steps do not work, manually copy the **hyperx-cloud-3s-battery.sdPlugin** into your streamdeck plugins folder
+2. After downloading the release, open a terminal in the project folder and run: npm install
+3. Copy the copy the **hyperx-cloud-3s-battery.sdPlugin** into your streamdeck plugins folder normally located at **C:\Users\\{user}\AppData\Roaming\Elgato\StreamDeck\Plugins**
 
 ---
 

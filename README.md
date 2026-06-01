@@ -35,13 +35,16 @@
 ## Installation
 
 ### Stream Deck Plugin
-
-**From the Elgato Marketplace** *(recommended)* — search for **"HyperX Battery"** in the Stream Deck software's Plugin Store, or find it on the [Elgato Marketplace](https://marketplace.elgato.com).
+<!-- replace coming soon with recommended after its uploaded -->
+**From the Elgato Marketplace** *(coming soon)* — This plugin is not yet published on the Elgato Marketplace. For now, please use the manual installation steps below. 
+<!-- search for **"HyperX Battery"** in the Stream Deck software's Plugin Store, or find it on the [Elgato Marketplace](https://marketplace.elgato.com). -->
 
 **Manual:**
-1. Download the latest `.streamDeckPlugin` from [Releases](https://github.com/...)
+1. Download the latest `.streamDeckPlugin` from [Releases](JAG-Twinster/StreamDeck-HyperX-Cloud-3S-Battery-Level)
 2. Double-click the file — Stream Deck software installs it automatically
 3. Drag the **HyperX Battery** action onto any key
+
+If the above steps do not work, manually copy the **hyperx-cloud-3s-battery.sdPlugin** into your streamdeck plugins folder
 
 ---
 

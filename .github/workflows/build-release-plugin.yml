@@ -1,0 +1,74 @@
+name: Build Stream Deck Release Package
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing release tag to upload the package to (optional)
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: com.twinster.cloud-3s-battery-level.sdPlugin/package-lock.json
+
+      - name: Install production dependencies
+        working-directory: com.twinster.cloud-3s-battery-level.sdPlugin
+        run: npm ci --omit=dev
+
+      - name: Build .streamDeckPlugin package
+        id: package
+        shell: pwsh
+        run: |
+          $pluginDir = 'com.twinster.cloud-3s-battery-level.sdPlugin'
+          $distDir = 'dist'
+          $stageDir = Join-Path $distDir 'stage'
+          $stagePluginDir = Join-Path $stageDir $pluginDir
+
+          if (Test-Path $distDir) {
+            Remove-Item $distDir -Recurse -Force
+          }
+
+          New-Item -ItemType Directory -Path $stageDir | Out-Null
+          Copy-Item -Path $pluginDir -Destination $stagePluginDir -Recurse
+
+          $manifest = Get-Content (Join-Path $pluginDir 'manifest.json') | ConvertFrom-Json
+          $version = $manifest.Version
+          $assetName = "com.twinster.cloud-3s-battery-level-$version.streamDeckPlugin"
+          $zipPath = Join-Path $distDir ($assetName + '.zip')
+          $assetPath = Join-Path $distDir $assetName
+
+          Compress-Archive -Path $stagePluginDir -DestinationPath $zipPath -Force
+          Move-Item -Path $zipPath -Destination $assetPath
+
+          "asset_path=$assetPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "asset_name=$assetName" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Upload package as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.asset_name }}
+          path: ${{ steps.package.outputs.asset_path }}
+
+      - name: Attach package to GitHub release
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag != '')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.release_tag }}
+          files: ${{ steps.package.outputs.asset_path }}
